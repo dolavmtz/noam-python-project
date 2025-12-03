@@ -1,0 +1,5 @@
+streamlit
+google-genai
+python-dotenv
+git config --global user.name "Noam"
+git config --global user.email "dolavmtz88@gmail.com"
