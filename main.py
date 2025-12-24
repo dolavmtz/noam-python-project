@@ -1,4 +1,7 @@
 import streamlit as st
+from Helper import *
+
+setRTL()
 
 st.set_page_config(
     page_title="הפרויקטים של נועם",
@@ -6,50 +9,58 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- עיצוב (ימין + העלמת סטרימליט) ---
+# --- עיצוב נקי, צבעוני, ללא רווחים מיותרים ---
 st.markdown("""
 <style>
 .block-container {
     direction: rtl;
     text-align: right;
+    max-width: 900px;
+    padding-top: 20px;
 }
-header, footer {
-    visibility: hidden;
-}
+header, footer { visibility: hidden; }
+
 .nav-box {
-    background: #eef1ff;
-    padding: 15px;
-    border-radius: 14px;
-    margin-bottom: 30px;
+    background: linear-gradient(135deg, #dfe7ff, #f2f4ff);
+    padding: 0px 0px;
+    border-radius: 0px;
+    margin-bottom: 0px;
+    border: 1px solid #cbd5ff;
+    display: inline-block;
 }
+
+.title-box {
+    background: white;
+    padding: 0px;
+    border-radius: 20px;
+    border: 1px solid #e6e6e6;
+    box-shadow: 0 0px 0px rgba(0,0,0,0.00);
+}
+
+h1 { color: #2a2d46 !important; }
+h2 { color: #3c3f60 !important; }
+p, .stMarkdown { color: #4a4c63 !important; }
 </style>
 """, unsafe_allow_html=True)
 
+# --- ניווט נקי וללא בלוקים ריקים ---
+st.markdown('<div class="nav-box">', unsafe_allow_html=True)
+st.page_link("Pages/Alias.py", label="🎮 משחק אליאס")
+st.markdown('</div>', unsafe_allow_html=True)
 
-# --- תפריט ניווט אמיתי עם page_link ---
-with st.container():
-    st.markdown('<div class="nav-box">', unsafe_allow_html=True)
-
-    col1, col2, col3 = st.columns([1,1,1])
-
-    with col1:
-        st.page_link("main.py", label="🏠 דף הבית")
-
-    with col2:
-        st.page_link("Pages/Alias.py", label="🎮 משחק אליאס")
-
-
-    st.markdown('</div>', unsafe_allow_html=True)
+st.page_link("Pages/Homework.py", label="📚 מעבר לבוט שיעורי בית")
 
 
 # --- תוכן הדף ---
-st.title("ברוכים הבאים לאתר הפרויקטים של נועם ✨")
+st.markdown('<div class="title-box">', unsafe_allow_html=True)
 
-st.subheader("מי אנחנו?")
+st.title("ברוכים הבאים לאתר הפרויקטים של נועם✨")
+
 st.write("""
-אנחנו נועם והצוות, מפתחים פרויקטים מגניבים 👨‍💻👩‍💻  
-באתר הזה תוכלו למצוא אפליקציות, משחקים וכלי קוד שבנינו.
+בניתי לכם כל מיני משחקים וכלים שתוכלו להשתמש בהם תהנו!! 
 """)
 
-st.subheader("הפרויקטים שלנו")
-st.write("בחרו אחד מהפרויקטים בתפריט למעלה 👆")
+st.subheader("התחילו מכאן:")
+st.write("בחרו פרויקט מהתפריט למעלה 👆")
+
+st.markdown('</div>', unsafe_allow_html=True)

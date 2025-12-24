@@ -1,10 +1,12 @@
 import os
 
-
 from dotenv import load_dotenv
 from google import genai
 import streamlit as st
+from Helper import *
 
+
+setRTL()
 
 st.set_page_config(
     page_title = "משחק אליאס",
@@ -12,11 +14,18 @@ st.set_page_config(
 
 )
 
+
+st.page_link("main.py", label="🏠 חזרה לדף הבית")
+
+
+
 st.title("משחק אליאס")
 
 
-load_dotenv()
-API_KEY = os.getenv("API_KEY")
+# load_dotenv()
+# API_KEY = os.getenv("API_KEY")
+
+API_KEY = getAPIkey()
 
 
 def start():
