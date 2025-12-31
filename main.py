@@ -47,7 +47,7 @@ p, .stMarkdown { color: #4a4c63 !important; }
 st.markdown('<div class="nav-box">', unsafe_allow_html=True)
 #st.page_link("Pages/Alias.py", label="🎮 משחק אליאס")
 st.markdown('</div>', unsafe_allow_html=True)
-
+st.page_link("Pages/Alias.py", label="🎮 משחק אליאס")
 #st.page_link("Pages/Homework.py", label="📚 מעבר לבוט שיעורי בית")
 
 
