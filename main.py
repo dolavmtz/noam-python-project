@@ -45,10 +45,10 @@ p, .stMarkdown { color: #4a4c63 !important; }
 
 # --- ניווט נקי וללא בלוקים ריקים ---
 st.markdown('<div class="nav-box">', unsafe_allow_html=True)
-#st.page_link("Pages/Alias.py", label="🎮 משחק אליאס")
+#st.page_link("pages/Alias.py", label="🎮 משחק אליאס")
+st.page_link("pages/Alias.py", label="🎮 משחק אליאס")
+st.page_link("pages/HomeWork.py", label="📚 מעבר לבוט שיעורי בית")
 st.markdown('</div>', unsafe_allow_html=True)
-#st.page_link("Pages/Alias.py", label="🎮 משחק אליאס")
-st.page_link("Pages/HomeWork.py", label="📚 מעבר לבוט שיעורי בית")
 
 
 # --- תוכן הדף ---
