@@ -18,7 +18,7 @@ st.markdown("""
     max-width: 900px;
     padding-top: 20px;
 }
-header, footer { visibility: hidden; }
+
 
 .nav-box {
     background: linear-gradient(135deg, #dfe7ff, #f2f4ff);
