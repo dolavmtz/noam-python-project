@@ -5,7 +5,7 @@ import streamlit as st
 #פונקציה שטוענת את הAPI KEY  ומחזירה אותו
 def getAPIkey():
     load_dotenv()
-    API_KEY = os.getenv("API_KEY")
+    API_KEY = os.getenv("API_KEY") or st.secrets["API_KEY"]
     return API_KEY
 
 def setRTL():        #RTL  right to the left
