@@ -17,5 +17,7 @@ API_KEY = getAPIkey()
 
 Message("AI","היי איך אפשר לעזור לך")
 userinput = st.chat_input("השאלה שלך... ")
+
 if userinput:
     Message("User",userinput)
+    sendMessage(userinput)

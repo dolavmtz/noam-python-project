@@ -2,16 +2,76 @@ from dotenv import load_dotenv
 import os
 import streamlit as st
 from google import genai
+from google.genai import types
 
 
 all_models = ["gemini-2.5-flash-lite",
               "gemini-2.5-flash",
+              "gemini-3.0-flash",
               "gemini-2.0-flash",
-              "gemini-2.0-flash-lite",
-              "gemini-3.0-flash"]
+              "gemini-2.0-flash-lite"]
 
-def create_chat():
-    client = genai.Client(api_key=getAPIkey())
+def create_chat(model,instruction,history=[]):
+    if "client" not in st.session_state:
+        st.session_state.client = genai.Client(api_key=getAPIkey())
+
+    st.session_state.chat = st.session_state.client.chats.create(
+            model = model,
+            history = history,
+            config = types.GenerateContentConfig(
+                system_instruction =  instruction
+            )
+        )
+    print(st.session_state.chat)
+
+st.session_state.modelIndex = 0
+
+maxTrys = 5
+currentTrys = 0
+
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+def sendMessage(promt):
+    st.session_state.history.append(
+        {
+            "role" : "user",
+            "text" : promt
+        }
+    )
+
+
+
+    if "chat" not in st.session_state:
+        create_chat(all_models[0],"")
+
+
+    global currentTrys
+    try:
+        answer = st.session_state.chat.send_message(promt)
+        st.session_state.history.append(
+            {
+                "role": "user",
+                "text": answer.text
+            }
+        )
+        Message("ai",answer.text)
+        currentTrys = 0
+    except Exception as e:
+        error = str(e)
+        print(e)
+        currentTrys +=1
+        if currentTrys == maxTrys:
+            st.error("תקלה-כל המודלים לא עובדים היום נסו שנית בפעם אחרת")
+            return
+        if "overloaded" in error.lower():
+            st.session_state.modelIndex +=1
+            if st.session_state.modelIndex == len(all_models):
+                st.session_state.modelIndex = 0
+            newmodel = all_models[st.session_state.modelIndex]
+            st.info (f"trying{newmodel}")
+            create_chat(newmodel, "")
+            sendMessage(promt)
 
 #פונקציה שטוענת את הAPI KEY  ומחזירה אותו
 def getAPIkey():
