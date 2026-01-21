@@ -1,3 +1,5 @@
+import time
+
 from dotenv import load_dotenv
 import os
 import streamlit as st
@@ -32,11 +34,13 @@ currentTrys = 0
 if "history" not in st.session_state:
     st.session_state.history = []
 
+
+
 def sendMessage(promt):
     st.session_state.history.append(
         {
-            "role" : "user",
-            "text" : promt
+            "role": "user",
+            "text": promt
         }
     )
 
@@ -51,7 +55,7 @@ def sendMessage(promt):
         answer = st.session_state.chat.send_message(promt)
         st.session_state.history.append(
             {
-                "role": "user",
+                "role": "model",
                 "text": answer.text
             }
         )
@@ -72,6 +76,10 @@ def sendMessage(promt):
             st.info (f"trying{newmodel}")
             create_chat(newmodel, "")
             sendMessage(promt)
+        if "429" in error:
+            with st.spinner("יש יותר מידי קריאות - מחכים דקה...", show_time=True):
+                time.sleep(60)
+
 
 #פונקציה שטוענת את הAPI KEY  ומחזירה אותו
 def getAPIkey():
@@ -92,6 +100,9 @@ def setRTL():        #RTL  right to the left
 #אובייקט "שולח" - מי שלח, מה ההודעה, אייקון להודעה
 class Message:
     def __init__(self,role,text): #פונקציית הבניה  - self  - מי שיצרתי
+        if role.lower() == "model":
+            role = "ai"
+        print(role,text)
         self.role = role #מי שלח את ההודעה
         self.text = text #מה הוא שלח
         self.showMessage() #תציג את ההודעה

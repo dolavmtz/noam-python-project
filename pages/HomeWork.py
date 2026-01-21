@@ -16,7 +16,12 @@ st.title("בוט שיעורי בית")
 API_KEY = getAPIkey()
 
 Message("AI","היי איך אפשר לעזור לך")
+
+for m in st.session_state.history:
+    Message(m["role"],m["text"])
+
 userinput = st.chat_input("השאלה שלך... ")
+
 
 if userinput:
     Message("User",userinput)
