@@ -13,6 +13,13 @@ all_models = ["gemini-2.5-flash-lite",
               "gemini-2.0-flash",
               "gemini-2.0-flash-lite"]
 
+def currentTime():
+    print("use tool")
+    """ 
+    כלי שיודע מה הזמן עכשיו  ומחזיר טקסט של הזמן הנוכחי
+    """
+    return time.ctime()
+
 def create_chat(model,instruction,history=[]):
     if "client" not in st.session_state:
         st.session_state.client = genai.Client(api_key=getAPIkey())
