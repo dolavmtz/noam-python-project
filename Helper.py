@@ -7,6 +7,13 @@ from google import genai
 from google.genai import types
 
 
+st.session_state.page = ""
+def newPage(pagename):
+    if st.session_state.page != pagename
+        print("דף חדש")
+        st.session_state.page = pagename
+        st.session_state.history = []
+
 all_models = ["gemini-2.5-flash-lite",
               "gemini-2.5-flash",
               "gemini-3.0-flash",
@@ -23,6 +30,10 @@ def currentTime():
 def create_chat(model,instruction,history=[]):
     if "client" not in st.session_state:
         st.session_state.client = genai.Client(api_key=getAPIkey())
+    if instruction == "":
+        if "system_prompt" in st.session_state:
+            instruction = st.session_state.system_prompt
+
 
     st.session_state.chat = st.session_state.client.chats.create(
             model = model,
@@ -43,11 +54,11 @@ if "history" not in st.session_state:
 
 
 
-def sendMessage(promt):
+def sendMessage(prompt):
     st.session_state.history.append(
         {
             "role": "user",
-            "text": promt
+            "text": prompt
         }
     )
 
@@ -58,8 +69,10 @@ def sendMessage(promt):
 
 
     global currentTrys
+    print(all_models[st.session_state.modelIndex])
+    #st.caption(all_models[st.session_state.modelIndex])
     try:
-        answer = st.session_state.chat.send_message(promt)
+        answer = st.session_state.chat.send_message(prompt)
         st.session_state.history.append(
             {
                 "role": "model",
@@ -76,16 +89,21 @@ def sendMessage(promt):
             st.error("תקלה-כל המודלים לא עובדים היום נסו שנית בפעם אחרת")
             return
         if "overloaded" in error.lower():
-            st.session_state.modelIndex +=1
-            if st.session_state.modelIndex == len(all_models):
-                st.session_state.modelIndex = 0
-            newmodel = all_models[st.session_state.modelIndex]
-            st.info (f"trying{newmodel}")
-            create_chat(newmodel, "")
-            sendMessage(promt)
+            newChat(prompt)
         if "429" in error:
             with st.spinner("יש יותר מידי קריאות - מחכים דקה...", show_time=True):
                 time.sleep(60)
+                newChat(prompt)
+def newChat(prompt):
+    st.session_state.modelIndex += 1
+    if st.session_state.modelIndex == len(all_models):
+        st.session_state.modelIndex = 0
+    newmodel = all_models[st.session_state.modelIndex]
+    st.info(f"trying{newmodel}")
+    create_chat(newmodel, "")
+    sendMessage(prompt)
+
+
 
 
 #פונקציה שטוענת את הAPI KEY  ומחזירה אותו

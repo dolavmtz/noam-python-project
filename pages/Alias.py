@@ -32,14 +32,14 @@ def start():
     st.session_state.end = False
     st.session_state.gemini = genai.Client(api_key=API_KEY)
     st.session_state.history = []
-    message = send(promt)
+    message = send(prompt)
     # st.text(message)
     # st.session_state.history.append()
     # ai_text =st.chat_message("ai")
     # ai_text.write(message)
 
 
-promt = """
+prompt = """
         ### הקשר
         אנחנו במשחק "אליאס" - שזה משחק ניחושים
         עליך להגריל מילה ואני צריך לנחש מה המילה שהגרלת
@@ -61,11 +61,11 @@ print("מתחיל...")
 all_models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash-lite"]
 
 
-def send(promt):
+def send(prompt):
     st.session_state.loadin = True
     st.session_state.history.append({
         "sender": "user",
-        "text": promt
+        "text": prompt
     })
     context = "n\ זו השיחה המלאה:"
     for line in st.session_state.history:
@@ -103,7 +103,7 @@ if 'end' in st.session_state and st.session_state.end:
 
 # chat = gemini.chats.create(model="gemini-2.5-flash-lite") #יוצרים צאט חדש
 
-# message = send(promt)
+# message = send(prompt)
 # st.text(message)
 
 else:
@@ -133,7 +133,7 @@ else:
 # to = input("למי לכתוב ברכה? >>")
 # content = input("למתי לכתוב הברכה? >>")
 # addons = input("מידע חשוב נוסף כדי לכתוב את הברכה >>")
-# promt = f"""אתה מומחה לכתיבת ברכות
+# prompt = f"""אתה מומחה לכתיבת ברכות
 #             כתוב ברכה ל{to}
 #             לכבוד{content}
 #             שים לב ש{addons}
@@ -143,5 +143,5 @@ else:
 #
 # gemini = genai.Client(api_key=API_KEY)
 # ai = gemini.chats.create(model="gemini-2.5-flash")
-# message = ai.send_message(promt)
+# message = ai.send_message(p)
 # print(message.text)
