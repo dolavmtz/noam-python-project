@@ -6,10 +6,22 @@ import streamlit as st
 from google import genai
 from google.genai import types
 
+from duckduckgo_search import DDGS
+
+
+def web_search(query :str) ->str:
+    print("searching: " + query)
+    """
+    פונקציה שמקבלת ערכים לחיפוש ומחזירה תוצאות מובילות
+    """
+    with DDGS() as d:
+        results = d.text(query,max_results=3)
+        print(results)
+web_search("ISRAEL")
 
 st.session_state.page = ""
 def newPage(pagename):
-    if st.session_state.page != pagename
+    if st.session_state.page != pagename:
         print("דף חדש")
         st.session_state.page = pagename
         st.session_state.history = []
@@ -39,7 +51,9 @@ def create_chat(model,instruction,history=[]):
             model = model,
             history = history,
             config = types.GenerateContentConfig(
-                system_instruction =  instruction
+                system_instruction =  instruction,
+                tools = [currentTime,],
+                automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=False)
             )
         )
     print(st.session_state.chat)
