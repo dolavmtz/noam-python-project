@@ -6,18 +6,21 @@ import streamlit as st
 from google import genai
 from google.genai import types
 
-from duckduckgo_search import DDGS
+from ddgs import DDGS
 
 
 def web_search(query :str) ->str:
     print("searching: " + query)
     """
     פונקציה שמקבלת ערכים לחיפוש ומחזירה תוצאות מובילות
+    הפונקציה תקבל טקסט לחיפוש(עדיף שיהיה כתוב באנגלית)
+    ותחזיר את התוצאות
     """
-    with DDGS() as d:
-        results = d.text(query,max_results=3)
-        print(results)
-web_search("ISRAEL")
+    with st.status("searching: " + query):
+
+        with DDGS() as d:
+            results = d.text(query,max_results=3)
+            return results
 
 st.session_state.page = ""
 def newPage(pagename):
@@ -52,7 +55,7 @@ def create_chat(model,instruction,history=[]):
             history = history,
             config = types.GenerateContentConfig(
                 system_instruction =  instruction,
-                tools = [currentTime,],
+                tools = [currentTime, web_search],
                 automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=False)
             )
         )
@@ -108,6 +111,8 @@ def sendMessage(prompt):
             with st.spinner("יש יותר מידי קריאות - מחכים דקה...", show_time=True):
                 time.sleep(60)
                 newChat(prompt)
+        if "503" in error:
+            newChat(prompt)
 def newChat(prompt):
     st.session_state.modelIndex += 1
     if st.session_state.modelIndex == len(all_models):
