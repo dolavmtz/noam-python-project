@@ -71,7 +71,7 @@ if "history" not in st.session_state:
 
 
 
-def sendMessage(prompt):
+def sendMessage(prompt, image=None):
     st.session_state.history.append(
         {
             "role": "user",
@@ -88,8 +88,13 @@ def sendMessage(prompt):
     global currentTrys
     print(all_models[st.session_state.modelIndex])
     #st.caption(all_models[st.session_state.modelIndex])
+
+    context = [prompt]
+    if image:
+        context.append(image)
+
     try:
-        answer = st.session_state.chat.send_message(prompt)
+        answer = st.session_state.chat.send_message(context)
         st.session_state.history.append(
             {
                 "role": "model",
@@ -98,6 +103,7 @@ def sendMessage(prompt):
         )
         Message("ai",answer.text)
         currentTrys = 0
+        st.rerun()
     except Exception as e:
         error = str(e)
         print(e)
@@ -106,21 +112,23 @@ def sendMessage(prompt):
             st.error("תקלה-כל המודלים לא עובדים היום נסו שנית בפעם אחרת")
             return
         if "overloaded" in error.lower():
-            newChat(prompt)
+            newChat(prompt, image)
         if "429" in error:
             with st.spinner("יש יותר מידי קריאות - מחכים דקה...", show_time=True):
                 time.sleep(60)
-                newChat(prompt)
+                newChat(prompt,image)
         if "503" in error:
-            newChat(prompt)
-def newChat(prompt):
+            newChat(prompt, image)
+def newChat(prompt, image=None):
+    st.session_state.chat = st.session_state.chats.create()
+
     st.session_state.modelIndex += 1
     if st.session_state.modelIndex == len(all_models):
         st.session_state.modelIndex = 0
     newmodel = all_models[st.session_state.modelIndex]
     st.info(f"trying{newmodel}")
     create_chat(newmodel, "")
-    sendMessage(prompt)
+    sendMessage(prompt,image)
 
 
 
