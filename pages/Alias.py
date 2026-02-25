@@ -8,6 +8,9 @@ from Helper import *
 
 setRTL()
 
+newPage("Alias")
+
+
 st.set_page_config(
     page_title = "משחק אליאס",
     page_icon = '🤖'
