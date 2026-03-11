@@ -24,6 +24,8 @@ def web_search(query :str) ->str:
 
 st.session_state.page = ""
 def newPage(pagename):
+    if "page" not in st.session_state:
+        st.session_state.page = ""
     if st.session_state.page != pagename:
         print("דף חדש")
         st.session_state.page = pagename
