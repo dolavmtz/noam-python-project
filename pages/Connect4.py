@@ -69,6 +69,34 @@ def checkWinner(check_row, check_col):
             print(board[cell][col])
             return board[cell][col]
 
+    offset = min (check_row,check_col)
+    start_row = check_row - offset
+    start_col = check_col-offset
+
+    if start_row + 4 >ROWS or start_col + 4 >COLS:
+        print("אין ניצחון באלכסון הזה")
+    else:
+        for i in range(ROWS - 3):
+            row = start_row + i
+            col = start_col + i
+
+            print(f"start checking: {row} {col}")
+
+            if col == COLS or row == ROWS:
+                break
+            if board[row] [col] == EMPTY:
+                count = 0
+            if board[row] [col] != board[check_row][check_col]:
+                count = 0
+
+            count += 1
+            if count == 4:
+                print("ניצחון")
+                print(board[row][col])
+                return board[row][col]
+
+
+
 def click(col):
     if board[0][col] != EMPTY:
         return
