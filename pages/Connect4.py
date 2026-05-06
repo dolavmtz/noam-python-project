@@ -76,7 +76,7 @@ def checkWinner(check_row, check_col):
     if start_row + 4 >ROWS or start_col + 4 >COLS:
         print("אין ניצחון באלכסון הזה")
     else:
-        for i in range(ROWS - 3):
+        for i in range(ROWS):
             row = start_row + i
             col = start_col + i
 
@@ -84,18 +84,47 @@ def checkWinner(check_row, check_col):
 
             if col == COLS or row == ROWS:
                 break
-            if board[row] [col] == EMPTY:
+            elif board[row] [col] == EMPTY:
                 count = 0
-            if board[row] [col] != board[check_row][check_col]:
+            elif board[row] [col] != board[check_row][check_col]:
                 count = 0
-
-            count += 1
+            else:
+                count += 1
             if count == 4:
                 print("ניצחון")
                 print(board[row][col])
                 return board[row][col]
 
+    dist_bottom = ROWS - 1 - check_row
+    dist_left = check_col
+    offset = min (dist_left,dist_bottom)
 
+    start_row = check_row + offset
+    start_col = check_col - offset
+
+    if start_row - 4 > 0 or start_col + 4 >COLS:
+        print("אין ניצחון באלכסון זה")
+    else:
+        count = 0
+        for cell in range(ROWS):
+            row = start_row - i
+            col = start_col + i
+            print(f"start checking: {row} {col}")
+
+            if col == COLS or row == ROWS or row<0:
+                break
+            elif board[row] [col] == EMPTY:
+                count = 0
+            elif board[row] [col] != board[check_row][check_col]:
+                count = 0
+            else:
+                count += 1
+            if count == 4:
+                print("ניצחון")
+                print(board[row][col])
+                return board[row][col]
+
+    return None
 
 def click(col):
     if board[0][col] != EMPTY:
@@ -116,6 +145,14 @@ if "winner" in st.session_state:
     winner = st.session_state.winner
 
 can_play = True
+
+
+has_empty = True
+for col in range(COLS):
+    if board[0][col] == EMPTY:
+        has_empty = True
+        break
+
 if winner == PLAYER:
     st.info("ניצחת!")
     can_play = False
