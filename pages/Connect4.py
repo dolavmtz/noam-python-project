@@ -41,6 +41,42 @@ def switchTurn():
     else:
         st.session_state.turn = PLAYER
 
+def available_cols(board):
+    cols = []
+    for c in range(COLS):
+        if board[0][c] == EMPTY:
+            cols.append(c)
+    return cols
+
+
+def caclculate_score(range4,good):
+    if good == PLAYER:
+        bad = COMPUTER
+    else:
+        bad = PLAYER
+
+    score = 0
+
+    if range4.count(good) == 4:
+        score += 10000
+
+    elif range4.count(good) == 3 and range4.count(EMPTY) == 1:
+        score += 100
+    elif range4.count(good) == 2 and range4.count(EMPTY) == 2:
+        score += 10
+
+    if range4.count(bad) == 4:
+        score -= 10000
+    elif range4.count(bad) == 3 and range4.count(EMPTY) == 1:
+        score -= 500
+    elif range4.count(bad) == 2 and range4.count(EMPTY) == 2:
+        score -= 50
+
+    print(range4,good, score)
+    return score
+
+
+
 def checkWinner(check_row, check_col):
     #for row in range(ROWS):
     row = check_row
@@ -76,6 +112,7 @@ def checkWinner(check_row, check_col):
     if start_row + 4 >ROWS or start_col + 4 >COLS:
         print("אין ניצחון באלכסון הזה")
     else:
+        count = 0
         for i in range(ROWS):
             row = start_row + i
             col = start_col + i
@@ -102,11 +139,11 @@ def checkWinner(check_row, check_col):
     start_row = check_row + offset
     start_col = check_col - offset
 
-    if start_row - 4 > 0 or start_col + 4 >COLS:
+    if start_row - 4 < 0 or start_col + 4 >COLS:
         print("אין ניצחון באלכסון זה")
     else:
         count = 0
-        for cell in range(ROWS):
+        for i in range(ROWS):
             row = start_row - i
             col = start_col + i
             print(f"start checking: {row} {col}")
@@ -158,6 +195,9 @@ if winner == PLAYER:
     can_play = False
 elif winner == COMPUTER:
     st.info("המחשב ניצח")
+    can_play = False
+elif available_cols(board) == []:
+    st.info("תיקו")
     can_play = False
 else:
     if turn == PLAYER:
