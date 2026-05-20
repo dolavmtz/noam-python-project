@@ -72,9 +72,45 @@ def caclculate_score(range4,good):
     elif range4.count(bad) == 2 and range4.count(EMPTY) == 2:
         score -= 50
 
-    print(range4,good, score)
+    #print(range4,good, score)
     return score
 
+
+
+def clac_board(board,good):
+    score = 0
+
+    for r in range(ROWS):
+        row = board[r]
+        for c in range(COLS-3):
+            range4 = row[c : c + 4]
+            score += caclculate_score(range4,good)
+    for c in range(COLS):
+        col = [board[r][c] for r in range(ROWS)]
+        for r in range(ROWS-3):
+            range4 = col[r : r + 4]
+
+    for r in range(ROWS-3):
+        for c in range(COLS-3):
+            range4 = [board[r + i][c + i] for i in range(4)]
+            score += caclculate_score(range4,good)
+
+            range4 = [board[r + 3 - i][c + i] for i in range(4)]
+            score += caclculate_score(range4,good)
+
+    middle_col =    COLS//2
+    middle_col = [board[r][middle_col] for r in range(ROWS)]
+    score += middle_col.count(good) * 5
+
+    right_col = [board[r][middle_col + 1] for r in range(ROWS)]
+    score += middle_col.count(good) * 2
+
+    left_col = [board[r][middle_col - 1] for r in range(ROWS)]
+    score += middle_col.count(good) * 2
+
+    return score
+
+print(clac_board(board,turn),turn)
 
 
 def checkWinner(check_row, check_col):
@@ -117,7 +153,7 @@ def checkWinner(check_row, check_col):
             row = start_row + i
             col = start_col + i
 
-            print(f"start checking: {row} {col}")
+            #print(f"start checking: {row} {col}")
 
             if col == COLS or row == ROWS:
                 break
