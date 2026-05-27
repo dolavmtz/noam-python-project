@@ -1,6 +1,7 @@
 import streamlit as st
 import random
 import time
+import copy
 
 #משתנים קבועים
 ROWS = 6
@@ -10,10 +11,42 @@ PLAYER = "🟡"
 COMPUTER = "⚫"
 EMPTY = "⚪"
 
+
+def virtual_board(board,player,col):
+    copy_board = copy.deepcopy(board)
+    for i in range(ROWS-1,-1,-1):
+        if copy_board[i][col] == EMPTY:
+            copy_board[i][col] = player
+            break
+    return copy_board
+
+
+def get_best_col(board,player):
+    valid_cols = available_cols(board)
+    best_col = -1
+    best_score = -999999999
+
+    scores = ["-"] * COLS
+
+    for c in valid_cols:
+        temp_board = virtual_board(board,player,c)
+        print(temp_board)
+        col_score = clac_board(temp_board,player)
+        scores[c] = col_score
+        if best_score < col_score:
+            best_score = col_score
+            best_col = c
+
+    st.session_state.score = scores
+    return best_col
+
+
 def computerTurn():
     time.sleep(1)
-    randomCol = random.randint(0,COLS-1)
-    click(randomCol)
+    #randomCol = random.randint(0,COLS-1)
+    #click(randomCol)
+    best_col = get_best_col(board,COMPUTER)
+    click(best_col)
 
 #לוח
 def newBoard():
@@ -98,19 +131,20 @@ def clac_board(board,good):
             range4 = [board[r + 3 - i][c + i] for i in range(4)]
             score += caclculate_score(range4,good)
 
-    middle_col =    COLS//2
-    middle_col = [board[r][middle_col] for r in range(ROWS)]
+    middle_col_number =   COLS//2
+    print(f"middle_col: {middle_col_number}")
+    middle_col = [board[r][middle_col_number] for r in range(ROWS)]
     score += middle_col.count(good) * 5
 
-    right_col = [board[r][middle_col + 1] for r in range(ROWS)]
-    score += middle_col.count(good) * 2
+    right_col = [board[r][middle_col_number + 1] for r in range(ROWS)]
+    score += right_col.count(good) * 2
 
-    left_col = [board[r][middle_col - 1] for r in range(ROWS)]
-    score += middle_col.count(good) * 2
+    left_col = [board[r][middle_col_number - 1] for r in range(ROWS)]
+    score += left_col.count(good) * 2
 
     return score
 
-print(clac_board(board,turn),turn)
+#print(clac_board(board,turn),turn)
 
 
 def checkWinner(check_row, check_col):
@@ -240,6 +274,12 @@ else:
         st.info("עכשיו תור השחקן")
     else:
         st.status("המחשב חושב")
+if "score" not in st.session_state:
+    st.session_state.score = [0] * COLS
+
+scores = st.session_state.score
+print(scores)
+
 
 for r in range(ROWS):
     columns = st.columns(COLS)
@@ -248,6 +288,17 @@ for r in range(ROWS):
             cell = board[r][c]
             if st.button(cell,key= f"row_{r}_col_{c}",use_container_width=True, disabled= turn==COMPUTER or not can_play):
                 click(c)
+
+columns = st.columns(COLS)
+for c in range(COLS):
+    with columns[c]:
+        col_score = scores[c]
+        if col_score == 0:
+            st.badge(str(col_score),color="gray")
+        elif col_score < 0:
+            st.badge(str(col_score),color="red")
+        else:
+            st.badge(str(col_score),color="green")
 
 if turn == COMPUTER and can_play:
     computerTurn()
