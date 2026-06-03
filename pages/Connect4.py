@@ -11,6 +11,45 @@ PLAYER = "🟡"
 COMPUTER = "⚫"
 EMPTY = "⚪"
 
+moves = 3
+
+
+def minimax(board_copy,move_number,current_player):
+    computer_score = clac_board(board_copy,COMPUTER)
+    user_score = clac_board(board_copy,PLAYER)
+
+    big_number = 999999999
+    if computer_score > 10000:
+        return big_number
+    if user_score > 10000:
+        return -big_number
+
+    all_cols = available_cols(board_copy)
+    if all_cols == []:
+        return 0
+
+    if move_number == 0:
+        return computer_score
+
+    if current_player == COMPUTER:
+        best_score = -big_number
+        for col in all_cols:
+            new_copy_board = virtual_board(board_copy,COMPUTER,col)
+            col_score = minimax(new_copy_board,move_number - 1,PLAYER)
+            if best_score < col_score:
+                best_score = col_score
+        return best_score
+    else:
+        worst_score = big_number
+        for col in all_cols:
+            new_copy_board = virtual_board(board_copy,PLAYER,col)
+            col_score = minimax(new_copy_board,move_number - 1,COMPUTER)
+            if col_score < worst_score:
+                worst_score = col_score
+        return worst_score
+
+
+
 
 def virtual_board(board,player,col):
     copy_board = copy.deepcopy(board)
@@ -293,7 +332,7 @@ columns = st.columns(COLS)
 for c in range(COLS):
     with columns[c]:
         col_score = scores[c]
-        if col_score == 0:
+        if col_score == 0 or col_score == '-':
             st.badge(str(col_score),color="gray")
         elif col_score < 0:
             st.badge(str(col_score),color="red")
