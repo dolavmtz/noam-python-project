@@ -11,10 +11,24 @@ PLAYER = "🟡"
 COMPUTER = "⚫"
 EMPTY = "⚪"
 
-moves = 3
+if "moves" not in st.session_state:
+    st.session_state.moves = 3
+
+with st.sidebar:
+    st.text(f"שחקן: {PLAYER}")
+    st.text(f"מחשב: {COMPUTER}")
+
+    st.divider()
+
+    moves = st.slider(
+        label="רמת קושי",
+        min_value = 1,
+        max_value = 5,
+        value = st.session_state.moves
+    )
 
 
-def minimax(board_copy,move_number,current_player):
+def minimax(board_copy,move_number,current_player,alpha,beta):
     computer_score = clac_board(board_copy,COMPUTER)
     user_score = clac_board(board_copy,PLAYER)
 
@@ -35,17 +49,25 @@ def minimax(board_copy,move_number,current_player):
         best_score = -big_number
         for col in all_cols:
             new_copy_board = virtual_board(board_copy,COMPUTER,col)
-            col_score = minimax(new_copy_board,move_number - 1,PLAYER)
+            col_score = minimax(new_copy_board,move_number - 1,PLAYER,alpha,beta)
             if best_score < col_score:
                 best_score = col_score
+            if alpha < best_score:
+                alpha = best_score
+            if alpha >= beta:
+                break
         return best_score
     else:
         worst_score = big_number
         for col in all_cols:
             new_copy_board = virtual_board(board_copy,PLAYER,col)
-            col_score = minimax(new_copy_board,move_number - 1,COMPUTER)
+            col_score = minimax(new_copy_board,move_number - 1,COMPUTER,alpha,beta)
             if col_score < worst_score:
                 worst_score = col_score
+            if beta < worst_score:
+                beta = worst_score
+            if alpha >= beta:
+                break
         return worst_score
 
 
@@ -69,8 +91,8 @@ def get_best_col(board,player):
 
     for c in valid_cols:
         temp_board = virtual_board(board,player,c)
-        print(temp_board)
-        col_score = clac_board(temp_board,player)
+        #col_score = clac_board(temp_board,player)
+        col_score = minimax(temp_board,moves - 1, PLAYER if player == COMPUTER else COMPUTER,-99999,99999 )
         scores[c] = col_score
         if best_score < col_score:
             best_score = col_score
@@ -81,7 +103,6 @@ def get_best_col(board,player):
 
 
 def computerTurn():
-    time.sleep(1)
     #randomCol = random.randint(0,COLS-1)
     #click(randomCol)
     best_col = get_best_col(board,COMPUTER)
@@ -130,7 +151,7 @@ def caclculate_score(range4,good):
     score = 0
 
     if range4.count(good) == 4:
-        score += 10000
+        score += 50000
 
     elif range4.count(good) == 3 and range4.count(EMPTY) == 1:
         score += 100
@@ -138,7 +159,7 @@ def caclculate_score(range4,good):
         score += 10
 
     if range4.count(bad) == 4:
-        score -= 10000
+        score -= 50000
     elif range4.count(bad) == 3 and range4.count(EMPTY) == 1:
         score -= 500
     elif range4.count(bad) == 2 and range4.count(EMPTY) == 2:
@@ -293,6 +314,15 @@ if "winner" in st.session_state:
 can_play = True
 
 
+def resetGame():
+    if st.button("משחק חדש"):
+        st.session_state.winner = None
+        st.session_state.scores = [0] * COLS
+        st.session_state.board = newBoard()
+        st.session_state.turn = PLAYER
+        st.rerun()
+
+
 has_empty = True
 for col in range(COLS):
     if board[0][col] == EMPTY:
@@ -302,12 +332,16 @@ for col in range(COLS):
 if winner == PLAYER:
     st.info("ניצחת!")
     can_play = False
+    resetGame()
+    st.balloons()
 elif winner == COMPUTER:
     st.info("המחשב ניצח")
     can_play = False
+    resetGame()
 elif available_cols(board) == []:
     st.info("תיקו")
     can_play = False
+    resetGame()
 else:
     if turn == PLAYER:
         st.info("עכשיו תור השחקן")
