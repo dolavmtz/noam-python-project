@@ -2,6 +2,7 @@ import streamlit as st
 import random
 import time
 import copy
+from Helper import *
 
 #משתנים קבועים
 ROWS = 6
@@ -10,6 +11,7 @@ COLS = 7
 PLAYER = "🟡"
 COMPUTER = "⚫"
 EMPTY = "⚪"
+setRTL()
 
 if "moves" not in st.session_state:
     st.session_state.moves = 3
