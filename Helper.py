@@ -31,11 +31,12 @@ def newPage(pagename):
         st.session_state.page = pagename
         st.session_state.history = []
 
-all_models = ["gemini-2.5-flash-lite",
+all_models = ["gemini-3.1-flash-lite",
+              "gemini-2.5-flash-lite",
               "gemini-2.5-flash",
-              "gemini-3.0-flash",
-              "gemini-2.0-flash",
-              "gemini-2.0-flash-lite"]
+              "gemini-3-flash",
+              "gemini-3-flash-preview"
+]
 
 def currentTime():
     print("use tool")

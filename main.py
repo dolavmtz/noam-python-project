@@ -48,6 +48,7 @@ st.markdown('<div class="nav-box">', unsafe_allow_html=True)
 #st.page_link("pages/Alias.py", label="🎮 משחק אליאס")
 st.page_link("pages/Alias.py", label="🎮 משחק אליאס")
 st.page_link("pages/HomeWork.py", label="📚 מעבר לבוט שיעורי בית")
+st.page_link("pages/HomeWork.py", label=" 🎲 ארבע בשורה מול מחשב ")
 st.markdown('</div>', unsafe_allow_html=True)
 
 
