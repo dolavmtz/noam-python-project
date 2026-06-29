@@ -45,6 +45,8 @@ def currentTime():
     """
     return time.ctime()
 
+tools = [currentTime,web_search]
+
 def create_chat(model,instruction,history=[]):
     if "client" not in st.session_state:
         st.session_state.client = genai.Client(api_key=getAPIkey())
@@ -58,7 +60,7 @@ def create_chat(model,instruction,history=[]):
             history = history,
             config = types.GenerateContentConfig(
                 system_instruction =  instruction,
-                tools = [currentTime, web_search],
+                tools = tools,
                 automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=False)
             )
         )
@@ -146,6 +148,14 @@ def setRTL():        #RTL  right to the left
     st.markdown("""
     <style>
     html, body, [class*="css"] {
+        direction: rtl;
+        text-align: right;
+    }
+    code,pre{
+        direction: rtl;
+        text-align: left;
+    }
+    p,h1,h2,h3,h4,h5,h6,ol,ul{
         direction: rtl;
         text-align: right;
     }
