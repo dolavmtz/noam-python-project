@@ -8,6 +8,8 @@ from google.genai import types
 
 from ddgs import DDGS
 
+if "modelIndex" not in st.session_state:
+    st.session_state.modelIndex = 0
 
 def web_search(query :str) ->str:
     print("searching: " + query)
@@ -45,6 +47,32 @@ def currentTime():
     """
     return time.ctime()
 
+def ask_question(question:str,options:list[str]):
+    """
+    כלי לשאילת שאלה כדי להבהיר מצב כלשהו
+    כל פעם שולח שאלה אחת + 2-4 אפשרויות שאתה רוצה לשאול את המשתמש
+    :param question: השאלה שאתה שואל
+    :param options: אפשרויות מתאימות 2-4
+    :return: סטטוס
+    """
+    st.session_state.question = question
+    st.session_state.options = options
+    st.session_state.status = "wait for answer"
+    st.rerun()
+
+def mark_step_done(step_name:str,summary:str,next_step:str):
+    """
+    פונקציה שמסמנת לסוכן שהוא סיים שלב ואפשר לעבור לשלב הבא
+    :param step_name: שם השלב שסיימנו
+    :param summary: תקציר מצומצם - מה צריך לדעת בשביל השלב הבא
+    :param next_step: מה השלב הבא
+    """
+
+    st.session_state.completed_step.append(step_name)
+    st.session_state.current_step(next_step)
+
+
+
 tools = [currentTime,web_search]
 
 def create_chat(model,instruction,history=[]):
@@ -77,6 +105,9 @@ if "history" not in st.session_state:
 
 
 def sendMessage(prompt, image=None):
+    if "modelIndex" not in st.session_state:
+        st.session_state.modelIndex = 0
+
     st.session_state.history.append(
         {
             "role": "user",

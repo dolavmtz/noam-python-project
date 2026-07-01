@@ -10,18 +10,6 @@ st.set_page_config(
 
 )
 
-def ask_question(question:str,options:list[str]) ->str:
-    """
-    כלי לשאילת שאלה כדי להבהיר מצב כלשהו
-    כל פעם שולח שאלה אחת + 2-4 אפשרויות שאתה רוצה לשאול את המשתמש
-    :param question: השאלה שאתה שואל
-    :param options: אפשרויות מתאימות 2-4
-    :return: סטטוס
-    """
-    st.session_state.question = question
-    st.session_state.options = options
-    st.session_state.status = "wait for answer"
-    return "השאלה נשלחה"
 
 
 setRTL()
@@ -49,15 +37,42 @@ systemPrompt = """
     אם יש קוד עם סיכון - תשאל את המשתמש האם להשתמש - ותסביר מה השיקולים
     אל תתקדם אם  המשתמש לא אישר לך או עם חסר מידע
     הוסף הערות לקוד ותסביר תמיד קוד
+    כתוב רק שאלה אחת בכל פעם והמתן לתשובה אל תעמיס על המשתמש
+    שים לב לשאול שאלות רק דרך הtool
     
     #יכולות
     אם אתה רוצה לשאול שאלות - תפעיל את הכלי ask_question עם שאלה ובין 2-4 אפשרויות
     כתוב ל י "כמה שאלות כדי להמשיך:"
+    אל תוסיף מידע נוסף מעבר לשאלות מהכלי
+    תכתוב בכל שלב עד 3 שאלות וזהו
 """
 
-tools.append(ask_question)
+steps = {
+    "idea":"בחירת נושא",
+    "plan" : "תוכנית",
+    "development" : "שלבי פיתוח",
+    "code" : "כתיבת קוד",
+    "check" : "בדיקות"
+
+}
+
+if "completed_steps" not in st.session_state:
+    st.session_state.completed_steps = []
+if "current_steps" not in st.session_state:
+    st.session_state.current_steps = "idea"
+
+
+if ask_question not in tools:
+    tools.append(ask_question)
+
 st.session_state.system_prompt = systemPrompt
 
+if "chosen_idea" not in st.session_state:
+    st.session_state.idea = ""
+if "plan" not in st.session_state:
+    st.session_state.plan = ""
+if "code_parts" not in st.session_state:
+    st.session_state.code_parts = []
 
 Message("AI", "היי, מה ניצור היום ביחד")
 
@@ -77,8 +92,10 @@ if st.session_state.status == "wait for answer":
         for i in range(len(cols)):
             with cols[i]:
                 if st.button(options[i],key=f"o_{i}"):
-                    print(options[i] + "נבחר")
-
+                    Message("User",options[i])
+                    st.session_state.status = "chat"
+                    with st.spinner("חושב..."):
+                        sendMessage(options[i])
 
 userinput = st.chat_input("השאלה שלך... ")
 
